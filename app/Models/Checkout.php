@@ -14,6 +14,11 @@ class Checkout extends Model
         $this->hasMany(CheckoutDetail::class);
     }
 
+    public function transaction()
+    {
+        $this->hasOne(Transaction::class);
+    }
+
     public function user()
     {
         $this->belongsTo(User::class);
