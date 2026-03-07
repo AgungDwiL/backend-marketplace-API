@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use App\Repositories\RepositoryInterfaces\UserRepositoryInterface;
 use App\Repositories\UserRepository;
+use App\Repositories\RepositoryInterfaces\VendorRepositoryInterface;
+use App\Repositories\VendorRepository;
 use Illuminate\Support\ServiceProvider;
 
 class RepositoriyServiceProvider extends ServiceProvider
@@ -16,6 +18,11 @@ class RepositoriyServiceProvider extends ServiceProvider
         $this->app->bind(
             UserRepositoryInterface::class,
             UserRepository::class
+        );
+
+        $this->app->bind(
+            VendorRepositoryInterface::class,
+            VendorRepository::class
         );
     }
 
