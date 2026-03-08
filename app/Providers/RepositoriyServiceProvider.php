@@ -10,6 +10,8 @@ use App\Repositories\VendorRepository;
 use App\Repositories\RepositoryInterfaces\ProductRepositoryInterface;
 use App\Repositories\ProductRepository;
 use App\Repositories\RepositoryInterfaces\CheckoutRepositoryInterface;
+use App\Repositories\RepositoryInterfaces\TransactionRepositoryInterface;
+use App\Repositories\TransactionRepository;
 use Illuminate\Support\ServiceProvider;
 
 class RepositoriyServiceProvider extends ServiceProvider
@@ -37,6 +39,11 @@ class RepositoriyServiceProvider extends ServiceProvider
         $this->app->bind(
             CheckoutRepositoryInterface::class,
             CheckoutRepository::class
+        );
+
+        $this->app->bind(
+            TransactionRepositoryInterface::class,
+            TransactionRepository::class
         );
     }
 

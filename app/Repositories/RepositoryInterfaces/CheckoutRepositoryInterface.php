@@ -14,4 +14,5 @@ interface CheckoutRepositoryInterface
     public function createCheckout(array $data): Model;
     public function updateCheckout(int $id, array $data): Model;
     public function deleteCheckout(int $id): bool;
+    public function deleteCheckoutDetail(int $checkout_id, int $detail_id): bool;
 }
