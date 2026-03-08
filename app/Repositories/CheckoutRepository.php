@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Checkout;
+use App\Models\User;
 use App\Repositories\RepositoryInterfaces\CheckoutRepositoryInterface;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
@@ -11,14 +12,24 @@ use Illuminate\Support\Facades\Log;
 
 class CheckoutRepository extends Repository implements CheckoutRepositoryInterface
 {
-    public function getAllCheckout(): Collection
+    public function getAllCheckout(?User $user = null): Collection
     {
-        return Checkout::all();
+        if ($user) {
+            return Checkout::where('user_id', $user->id)->get();
+        } else {
+            return Checkout::all();
+        }
     }
 
-    public function getUnpaidCheckout(): Collection
+    public function getUnpaidCheckout(?User $user = null): Collection
     {
-        return Checkout::doesntHave('transaction')->get();
+        if ($user) {
+            return Checkout::where('user_id', $user->id)
+                ->doesntHave('transaction')
+                ->get();
+        } else {
+            return Checkout::doesntHave('transaction')->get();
+        }
     }
 
     public function getCheckoutById(int $id): ?Model
