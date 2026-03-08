@@ -28,14 +28,15 @@ class VendorRepository extends Repository implements VendorRepositoryInterface
 
     public function createVendor(array $data): Model
     {
-        $user = new Vendor($data);
-        return $user;
+        $vendor = new Vendor($data);
+        $vendor->save();
+        return $vendor;
     }
 
     public function updateVendor(int $id, array $data): Model
     {
-        $user = Vendor::find($id)->update($data);
-        return $user;
+        $vendor = Vendor::find($id)->update($data);
+        return $vendor;
     }
 
     public function deleteVendor(int $id): bool

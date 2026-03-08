@@ -4,6 +4,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\VendorController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -24,6 +25,14 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     Route::group(['prefix' => 'user'], function () {
         Route::patch('/', [UserController::class, 'update']);
+    });
+
+    Route::group(['prefix' => 'vendor'], function () {
+        Route::get('/', [VendorController::class, 'index']);
+        Route::get('/{id}', [VendorController::class, 'detail']);
+        Route::post('/', [VendorController::class, 'create']);
+        Route::patch('/{id}', [VendorController::class, 'update']);
+        Route::delete('/{id}', [VendorController::class, 'delete']);
     });
 
     Route::group(['prefix' => 'product'], function () {
