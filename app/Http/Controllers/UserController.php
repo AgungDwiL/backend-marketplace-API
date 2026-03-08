@@ -8,6 +8,8 @@ use App\Http\Resources\UserResource;
 use App\Services\AuthService;
 use App\Repositories\RepositoryInterfaces\UserRepositoryInterface;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Request;
 
 class UserController extends Controller
 {
@@ -16,7 +18,7 @@ class UserController extends Controller
         protected AuthService $auth
     ) {}
 
-    public function login(LoginRequest $request)
+    public function login(LoginRequest $request): JsonResponse
     {
         $data = $request->validated();
         $user = $this->auth->login($data['identifier'], $data['password']);
@@ -49,9 +51,12 @@ class UserController extends Controller
                     ->setStatusCode(201);
     }
 
-    public function logout()
+    public function logout(): JsonResponse
     {
-        # code...
+        Auth::user()->tokens()->delete();
+        return response()->json([
+            'message' => 'Logout success.',
+        ], 200);
     }
 
     public function update()
