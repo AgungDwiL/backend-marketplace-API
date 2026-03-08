@@ -7,6 +7,7 @@ use App\Repositories\RepositoryInterfaces\UserRepositoryInterface;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 
 class UserRepository extends Repository implements UserRepositoryInterface
@@ -23,7 +24,9 @@ class UserRepository extends Repository implements UserRepositoryInterface
 
     public function createUser(array $data): Model
     {
+        $data['password'] = Hash::make($data['password']);
         $user = new User($data);
+        $user->save();
         return $user;
     }
 
