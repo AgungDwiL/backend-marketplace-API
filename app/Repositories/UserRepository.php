@@ -22,6 +22,16 @@ class UserRepository extends Repository implements UserRepositoryInterface
         return User::find($id);
     }
 
+    public function getUserByUsername(string $username): ?Model
+    {
+        return User::where('username', $username)->first();
+    }
+
+    public function getUserByEmail(string $email): ?Model
+    {
+        return User::where('email', $email)->first();
+    }
+
     public function createUser(array $data): Model
     {
         $data['password'] = Hash::make($data['password']);

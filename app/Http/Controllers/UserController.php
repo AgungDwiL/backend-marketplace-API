@@ -2,23 +2,45 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Resources\UserResource;
+use App\Services\AuthService;
 use App\Repositories\RepositoryInterfaces\UserRepositoryInterface;
-use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 
 class UserController extends Controller
 {
     public function __construct(
-        protected UserRepositoryInterface $userRepository
+        protected UserRepositoryInterface $userRepository,
+        protected AuthService $auth
     ) {}
 
-    public function login()
+    public function login(LoginRequest $request)
     {
-        # code...
+        $data = $request->validated();
+        $user = $this->auth->login($data['identifier'], $data['password']);
+
+        if ($user) {
+            $user->tokens()->delete();
+            $token = $user->createToken('api-token')->plainTextToken;
+            return response()->json(
+                [
+                    'user' =>  new UserResource($user),
+                    'auth' => [
+                        'token' => $token,
+                    ],
+                ],
+                200
+            );
+        } else {
+            return response()->json([
+                'message' => 'Invalid credentials.',
+            ], 404);
+        }
     }
 
-    public function register(RegisterRequest $request)
+    public function register(RegisterRequest $request): JsonResponse
     {
         $data = $request->validated();
         $user = $this->userRepository->createUser($data);
