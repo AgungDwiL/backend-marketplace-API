@@ -2,35 +2,131 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateProductRequest;
+use App\Http\Requests\UpdateProductRequest;
+use App\Http\Resources\ProductCollection;
+use App\Http\Resources\ProductResource;
+use App\Http\Resources\VendorResource;
+use App\Repositories\RepositoryInterfaces\ProductRepositoryInterface;
+use App\Repositories\RepositoryInterfaces\VendorRepositoryInterface;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
+
 class ProductController extends Controller
 {
-    public function index()
+    public function __construct(
+        protected ProductRepositoryInterface $productRepository,
+        protected VendorRepositoryInterface $vendorRepository
+    ) {}
+
+    public function index(): JsonResponse
     {
-        # code...
+        $products = $this->productRepository->getActiveProduct();
+        return (new ProductCollection($products))
+            ->response()
+            ->setStatusCode(200);
     }
 
-    public function indexByUser()
+    public function indexByVendor(int $vendor_id): JsonResponse
     {
-        # code...
+        $vendor = $this->vendorRepository->getVendorById($vendor_id);
+        if (!$vendor) {
+            return response()->json([
+                'message' => 'Vendor not found.',
+            ], 404);
+        } else {
+            $vendor->load('products');
+            return (new VendorResource($vendor))
+                ->response()
+                ->setStatusCode(200);
+        }
     }
 
-    public function detail()
+    public function detail(int $id): JsonResponse
     {
-        # code...
+        $product = $this->productRepository->getProductById($id);
+        if (!$product) {
+            return response()->json([
+                'message' => 'Vendor not found.',
+            ], 404);
+        } else {
+            return (new ProductResource($product))
+                ->response()
+                ->setStatusCode(200);
+        }
     }
 
-    public function create()
+    public function create(CreateProductRequest $request)
     {
-        # code...
+        $data = $request->validated();
+        $vendor = Auth::user()->vendor;
+
+        if (!$vendor) {
+            return response()->json([
+                'message' => 'Unauthorized, create vendor first.',
+            ], 403);
+        } else {
+            $data['vendor_id'] = $vendor->id;
+            $product = $this->productRepository->createProduct($data);
+            return (new ProductResource($product))
+                ->response()
+                ->setStatusCode(201);
+        }
     }
 
-    public function update()
+    public function update(UpdateProductRequest $request, int $id): JsonResponse
     {
-        # code...
+        $data = $request->validated();
+        $vendor = Auth::user()->vendor;
+        $product = $this->productRepository->getProductById($id);
+
+        if (!$product) {
+            return response()->json([
+                'message' => 'Product not found.',
+            ], 404);
+        } else {
+            if (!$vendor) {
+                return response()->json([
+                    'message' => 'Unauthorized, create vendor first.',
+                ], 403);
+            } elseif ($vendor->id != $product->vendor_id) {
+                return response()->json([
+                    'message' => 'Unauthorized.',
+                ], 403);
+            } else {
+                $product->update($data);
+                return (new ProductResource($product))
+                    ->response()
+                    ->setStatusCode(200);
+            }
+        }
     }
 
-    public function delete()
+    public function delete(int $id)
     {
-        # code...
+        $vendor = Auth::user()->vendor;
+        $product = $this->productRepository->getProductById($id);
+
+
+        if (!$product) {
+            return response()->json([
+                'message' => 'Product not found.',
+            ], 404);
+        } else {
+            if (!$vendor) {
+                return response()->json([
+                    'message' => 'Unauthorized, create vendor first.',
+                ], 403);
+            } elseif ($vendor->id != $product->vendor_id) {
+                return response()->json([
+                    'message' => 'Unauthorized.',
+                ], 403);
+            } else {
+                $product->delete();
+                return response()->json([
+                    'messate' => 'Ok',
+                ], 200);
+            }
+        }
     }
 }

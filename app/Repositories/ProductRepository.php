@@ -30,14 +30,15 @@ class ProductRepository extends Repository implements ProductRepositoryInterface
 
     public function createProduct(array $data): Model
     {
-        $user = new Product($data);
-        return $user;
+        $product = new Product($data);
+        $product->save();
+        return $product;
     }
 
     public function updateProduct(int $id, array $data): Model
     {
-        $user = Product::find($id)->update($data);
-        return $user;
+        $product = Product::find($id)->update($data);
+        return $product;
     }
 
     public function deleteProduct(int $id): bool

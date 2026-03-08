@@ -16,7 +16,7 @@ return new class extends Migration {
             $table->string('code', 10);
             $table->string('name');
             $table->decimal('price', 10, 2);
-            $table->string('img_path');
+            $table->string('img_path')->nullable();
             $table->timestamps();
         });
     }

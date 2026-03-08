@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::patterns([
     'id' => '[0-9]+',
-    'user_id' => '[0-9]+',
+    'vendor_id' => '[0-9]+',
 ]);
 
 Route::get('/user', function (Request $request) {
@@ -59,6 +59,6 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
 Route::group(['prefix' => 'product'], function () {
     Route::get('/', [ProductController::class, 'index']);
-    Route::get('/{user_id}', [ProductController::class, 'indexByUser']);
+    Route::get('/{vendor_id}', [ProductController::class, 'indexByVendor']);
     Route::get('/{id}', [ProductController::class, 'detail']);
 });
