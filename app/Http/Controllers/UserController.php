@@ -4,24 +4,25 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
+use App\Http\Requests\UpdateUserRequest;
 use App\Http\Resources\UserResource;
 use App\Services\AuthService;
 use App\Repositories\RepositoryInterfaces\UserRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
     public function __construct(
         protected UserRepositoryInterface $userRepository,
-        protected AuthService $auth
+        protected AuthService $authService
     ) {}
 
     public function login(LoginRequest $request): JsonResponse
     {
         $data = $request->validated();
-        $user = $this->auth->login($data['identifier'], $data['password']);
+        $user = $this->authService->login($data['identifier'], $data['password']);
 
         if ($user) {
             $user->tokens()->delete();
@@ -59,8 +60,24 @@ class UserController extends Controller
         ], 200);
     }
 
-    public function update()
+    public function update(UpdateUserRequest $request)
     {
-        # code...
+        $data = $request->validated();
+        $user = $request->user();
+
+
+        $user->username = $data['username'] ?? $user->username;
+        $user->name = $data['name'] ?? $user->name;
+        $user->email = $data['email'] ?? $user->email;
+
+        if (isset($data['password'])) {
+            $user->password = Hash::make(optional($data['password'])) ?? $user->password;
+        }
+
+        $user->save();
+
+        return (new UserResource($user))
+            ->response()
+            ->setStatusCode(200);
     }
 }

@@ -23,7 +23,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('/logout', [UserController::class, 'logout']);
 
     Route::group(['prefix' => 'user'], function () {
-        Route::patch('/{id}', [UserController::class, 'update']);
+        Route::patch('/', [UserController::class, 'update']);
     });
 
     Route::group(['prefix' => 'product'], function () {
