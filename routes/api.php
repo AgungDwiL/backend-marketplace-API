@@ -47,6 +47,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::post('/', [CheckoutController::class, 'create']);
         Route::patch('/{id}', [CheckoutController::class, 'update']);
         Route::delete('/{id}', [CheckoutController::class, 'delete']);
+        Route::delete('/{checkout_id}/{detail_id}', [CheckoutController::class, 'deleteDetail']);
     });
 
     Route::group(['prefix' => 'transaction'], function () {

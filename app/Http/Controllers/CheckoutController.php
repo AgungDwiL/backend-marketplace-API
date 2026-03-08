@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateCheckoutRequest;
+use App\Http\Requests\UpdateCheckoutRequest;
 use App\Http\Resources\CheckoutCollection;
 use App\Http\Resources\CheckoutResource;
 use App\Models\Checkout;
@@ -80,4 +81,97 @@ class CheckoutController extends Controller
             ->response()
             ->setStatusCode(201);
     }
+
+    public function update(UpdateCheckoutRequest $request, int $id)
+    {
+        $user = Auth::user();
+        $checkout = $this->chekcoutRepository->getCheckoutById($id);
+        $data = $request->validated();
+
+        if (!$checkout) {
+            return response()->json([
+                'message' => 'Checkout not found.',
+            ], 404);
+        } else {
+            if ($user->id != $checkout->user_id) {
+                return response()->json([
+                    'message' => 'Unauthorized.',
+                ], 403);
+            } else {
+                $checkout->details()->delete();
+                $totalAmount = 0;
+                foreach ($data['products'] as $row) {
+                    CheckoutDetail::create([
+                        'checkout_id' => $checkout->id,
+                        'product_id' => $row['id'],
+                    ]);
+                    $product = $this->productRepository->getProductById($row['id']);
+                    $totalAmount += $product->price;
+                }
+                $checkout->update([
+                    'total_amount' => $totalAmount,
+                ]);
+
+                return (new CheckoutResource($checkout->load('details.product')))
+                    ->response()
+                    ->setStatusCode(200);
+            }
+        }
+    }
+
+    public function delete(int $id)
+    {
+        $user = Auth::user();
+        $checkout = $this->chekcoutRepository->getCheckoutById($id);
+
+        if (!$checkout) {
+            return response()->json([
+                'message' => 'Checkout not found.',
+            ], 404);
+        } else {
+            if ($user->id != $checkout->user_id) {
+                return response()->json([
+                    'message' => 'Unauthorized.',
+                ], 403);
+            } else {
+                $checkout->details()->delete();
+                $checkout->delete();
+
+                return response()->json([
+                    'message' => 'Ok',
+                ], 200);
+            }
+        }
+    }
+
+    public function deleteDetail(int $checkout_id, int $detail_id)
+    {
+        $user = Auth::user();
+        $checkout = $this->chekcoutRepository->getCheckoutById($checkout_id);
+
+        if (!$checkout) {
+            return response()->json([
+                'message' => 'Checkout not found.',
+            ], 404);
+        } else {
+            if ($user->id != $checkout->user_id) {
+                return response()->json([
+                    'message' => 'Unauthorized.',
+                ], 403);
+            } else {
+                $deleteCheckoutDetail = $this->chekcoutRepository->deleteCheckoutDetail($detail_id);
+
+                if (!$deleteCheckoutDetail) {
+                    return response()->json([
+                        'message' => 'Checkout Detail not found.',
+                    ], 404);
+                } else {
+                    return response()->json([
+                        'message' => 'Ok',
+                    ], 200);
+                }
+            }
+        }
+    }
+
 }

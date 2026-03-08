@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Checkout;
+use App\Models\CheckoutDetail;
 use App\Models\User;
 use App\Repositories\RepositoryInterfaces\CheckoutRepositoryInterface;
 use Exception;
@@ -56,6 +57,17 @@ class CheckoutRepository extends Repository implements CheckoutRepositoryInterfa
             return true;
         } catch (Exception $e) {
             Log::error('Can not delete Checkout id ' . $id . ' because ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function deleteCheckoutDetail(int $id): bool
+    {
+        try {
+            CheckoutDetail::find($id)->delete();
+            return true;
+        } catch (Exception $e) {
+            Log::error('Can not delete Checkout Detail id ' . $id . ' because ' . $e->getMessage());
             return false;
         }
     }
