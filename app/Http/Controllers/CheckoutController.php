@@ -122,7 +122,7 @@ class CheckoutController extends Controller
     public function delete(int $id)
     {
         $user = Auth::user();
-        $checkout = $this->chekcoutRepository->getCheckoutById($id);
+        $checkout = $this->checkoutRepository->getCheckoutById($id);
 
         if (!$checkout) {
             return response()->json([
@@ -147,7 +147,7 @@ class CheckoutController extends Controller
     public function deleteDetail(int $checkout_id, int $detail_id)
     {
         $user = Auth::user();
-        $checkout = $this->chekcoutRepository->getCheckoutById($checkout_id);
+        $checkout = $this->checkoutRepository->getCheckoutById($checkout_id);
 
         if (!$checkout) {
             return response()->json([
@@ -159,7 +159,7 @@ class CheckoutController extends Controller
                     'message' => 'Unauthorized.',
                 ], 403);
             } else {
-                $deleteCheckoutDetail = $this->chekcoutRepository->deleteCheckoutDetail($detail_id);
+                $deleteCheckoutDetail = $this->checkoutRepository->deleteCheckoutDetail($detail_id);
 
                 if (!$deleteCheckoutDetail) {
                     return response()->json([
@@ -173,5 +173,4 @@ class CheckoutController extends Controller
             }
         }
     }
-
 }
