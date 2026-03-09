@@ -11,20 +11,19 @@ use App\Models\CheckoutDetail;
 use App\Repositories\CheckoutRepository;
 use App\Repositories\RepositoryInterfaces\ProductRepositoryInterface;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class CheckoutController extends Controller
 {
     public function __construct(
-        protected CheckoutRepository $chekcoutRepository,
+        protected CheckoutRepository $checkoutRepository,
         protected ProductRepositoryInterface $productRepository
     ) {}
 
     public function index(): JsonResponse
     {
         $user = Auth::user();
-        $checkouts = $this->chekcoutRepository->getAllCheckout($user);
+        $checkouts = $this->checkoutRepository->getAllCheckout($user);
 
         return (new CheckoutCollection($checkouts))
             ->response()
@@ -33,7 +32,7 @@ class CheckoutController extends Controller
 
     public function details(int $id)
     {
-        $checkout = $this->chekcoutRepository->getCheckoutById($id);
+        $checkout = $this->checkoutRepository->getCheckoutById($id);
         $user = Auth::user();
 
         if (!$checkout) {
@@ -85,7 +84,7 @@ class CheckoutController extends Controller
     public function update(UpdateCheckoutRequest $request, int $id)
     {
         $user = Auth::user();
-        $checkout = $this->chekcoutRepository->getCheckoutById($id);
+        $checkout = $this->checkoutRepository->getCheckoutById($id);
         $data = $request->validated();
 
         if (!$checkout) {
