@@ -100,7 +100,26 @@ class TransactionController extends Controller
 
     public function delete(int $id)
     {
-        # code...
-    }
+        $user = Auth::user();
+        $transaction = Transaction::find($id);
+        if (!$transaction) {
+            return response()->json([
+                'message' => 'Transaction not found.',
+            ], 404);
+        } else {
+            if ($user->id != $transaction->vendor_id) {
+                return response()->json([
+                    'message' => 'Unauthorized.',
+                ], 403);
+            } else {
+                $buyer = User::find($transaction->buyer_id);
+                $buyer->balance = $buyer->balance + $transaction->transactionDetail()->product()->price;
+                $user->balance = $user->balance - $transaction->transactionDetail()->product()->price;
 
+                return response()->json([
+                    'ok',
+                ], 200);
+            }
+        }
+    }
 }
