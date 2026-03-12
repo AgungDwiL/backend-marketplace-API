@@ -19,7 +19,7 @@ class TransactionResource extends JsonResource
             'transaction_time' => $this->transaction_time,
             'buyer' => new UserResource($this->whenLoaded('buyer')),
             'vendor' => new UserResource($this->whenLoaded('vendor')),
-            'checkout' => new CheckoutResource($this->whenLoaded('checkout')),
+            'checkoutDetail' => new CheckoutResource($this->whenLoaded('checkoutDetail')),
         ];
     }
 }

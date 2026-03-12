@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('buyer_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('vendor_id')->constrained('vendors')->onDelete('cascade');
-            $table->foreignId('checkout_id')->constrained()->onDelete('cascade');
+            $table->foreignId('checkout_detail_id')->constrained()->onDelete('cascade');
             $table->timestamp('transaction_time');
             $table->timestamps();
         });
@@ -28,7 +28,7 @@ return new class extends Migration {
         Schema::table('transactions', function (Blueprint $table) {
             $table->dropForeign(['buyer_id']);
             $table->dropForeign(['vendor_id']);
-            $table->dropForeign(['checkout_id']);
+            $table->dropForeign(['checkout_detail_id']);
         });
         Schema::dropIfExists('transactions');
     }

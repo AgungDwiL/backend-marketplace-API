@@ -23,7 +23,7 @@ class CreateTransactionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'checkout_id' => $this->checkout_id,
+            'checkout_id' => ['required', 'number'],
         ];
     }
 }

@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class CheckoutResource extends JsonResource
+class CheckoutDetailResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -15,11 +15,7 @@ class CheckoutResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => $this->id,
-            'total_amount' => $this->total_amount,
-            'status' => $this->status,
-
-            'details' => CheckoutDetailResource::collection($this->whenLoaded('details')),
+            'product' => new ProductResource($this->whenLoaded('product')),
         ];
     }
 }

@@ -8,6 +8,9 @@ class Transaction extends Model
 {
     protected $table = 'transactions';
     protected $guarded = ['id'];
+    protected $casts = [
+        'transaction_time' => 'datetime',
+    ];
 
     public function buyer()
     {
@@ -19,8 +22,8 @@ class Transaction extends Model
         $this->belongsTo(Vendor::class, 'vendor_id', 'id');
     }
 
-    public function checkout()
+    public function checkoutDetail()
     {
-        $this->belongsTo(Checkout::class);
+        $this->belongsTo(CheckoutDetail::class);
     }
 }
